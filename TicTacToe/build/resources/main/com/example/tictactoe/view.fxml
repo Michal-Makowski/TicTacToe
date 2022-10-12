@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane minHeight="400.0" minWidth="308.0" prefHeight="400.0" prefWidth="291.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.tictactoe.Controller">
+   <children>
+      <Button fx:id="button5" disable="true" layoutX="133.0" layoutY="186.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Button fx:id="button1" disable="true" layoutX="73.0" layoutY="126.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Button fx:id="button8" disable="true" layoutX="133.0" layoutY="246.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Button fx:id="button3" disable="true" layoutX="193.0" layoutY="126.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Button fx:id="button2" disable="true" layoutX="133.0" layoutY="126.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Button fx:id="button6" disable="true" layoutX="193.0" layoutY="186.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Button fx:id="button4" disable="true" layoutX="73.0" layoutY="186.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Button fx:id="button7" disable="true" layoutX="73.0" layoutY="246.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Button fx:id="button9" disable="true" layoutX="193.0" layoutY="246.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" />
+      <Label fx:id="label" layoutX="72.0" layoutY="65.0" prefHeight="28.0" prefWidth="183.0" text="Tic Tac Toe">
+         <font>
+            <Font size="18.0" />
+         </font></Label>
+      <Button fx:id="start" layoutX="72.0" layoutY="344.0" mnemonicParsing="false" onAction="#buttonStartClicked" prefHeight="25.0" prefWidth="183.0" text="Start" />
+   </children>
+</AnchorPane>
