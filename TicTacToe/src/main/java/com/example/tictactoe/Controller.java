@@ -13,9 +13,15 @@ import java.util.Random;
 public class Controller {
 
     private boolean xTurn;
-
+    private static final String PLAYERX = "Spieler X ist Dran";
+    private static final String PLAYERO = "Spieler O ist Dran";
+    private static final String X = "X";
+    private static final String O = "O";
+    private static final String PLAYERXWIN = "Spieler X hat gewonnen";
+    private static final String PLAYEROWIN = "Spieler O hat gewonnen";
+    private static final String DRAW = "Unentschieden";
+    private static final String CLEAR = "";
     private Random random = new Random();
-
     private ArrayList<Button> buttons;
 
     @FXML
@@ -41,13 +47,20 @@ public class Controller {
         whoMakeFirstTurn();
         play();
     }
-
+    private  void setPlayerO(){
+        xTurn = false;
+        label.setText(PLAYERO);
+    }
+    private void setPlayerX(){
+        xTurn = true;
+        label.setText(PLAYERX);
+    }
     // New game preparing //
     private void newGame() {
         buttons = new ArrayList<>(Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9));
         buttons.forEach(button -> {
             button.setDisable(false);
-            button.setText("");
+            button.setText(CLEAR);
         });
         checkBoxVsComputer.setDisable(true);
         radioButtonHard.setDisable(true);
@@ -57,11 +70,9 @@ public class Controller {
     // Picking a random player //
     private void whoMakeFirstTurn() {
         if (random.nextInt(2) == 0) {
-            xTurn = true;
-            label.setText("Spieler X ist Dran");
+            setPlayerX();
         } else {
-            xTurn = false;
-            label.setText("Spieler O ist Dran");
+            setPlayerO();
         }
         start.setText("Neu Start");
     }
@@ -72,8 +83,7 @@ public class Controller {
     // Game logic //
     private void play() {
         if (checkBoxVsComputer.isSelected()) {
-            xTurn = true;
-            label.setText("Spieler X ist Dran");
+            setPlayerX();
             buttons.forEach(button ->
                     playerMoveAiMove(button));
         } else
@@ -92,15 +102,13 @@ public class Controller {
     private void playerMove(Button button) {
         button.setOnMouseClicked(MouseEvent -> {
             if (xTurn) {
-                button.setText("X");
+                button.setText(X);
                 button.setDisable(true);
-                xTurn = false;
-                label.setText("Spieler O ist Dran");
+                setPlayerO();
             } else {
-                button.setText("O");
+                button.setText(O);
                 button.setDisable(true);
-                xTurn = true;
-                label.setText("Spieler X ist Dran");
+                setPlayerX();
             }
             anybodyWin();
         });
@@ -110,10 +118,9 @@ public class Controller {
     private void playerMoveAiMove(Button button) {
         button.setOnMouseClicked(MouseEvent -> {
             if (xTurn) {
-                button.setText("X");
+                button.setText(X);
                 button.setDisable(true);
-                xTurn = false;
-                label.setText("Spieler O ist Dran");
+                setPlayerO();
                 anybodyWin();
                 if (radioButtonEasy.isSelected()) easyAiMove();
                 if (radioButtonHard.isSelected()) hardAiMove();
@@ -127,13 +134,12 @@ public class Controller {
     // computer easy logic //
     private void easyAiMove() {
         easyAiCheck();
-        if (!label.getText().equals("Spieler X ist Dran")) {
+        if (!label.getText().equals(PLAYERX)) {
             int aiMove = random.nextInt(8);
-            if (buttons.get(aiMove).getText().equals("")) {
-                buttons.get(aiMove).setText("O");
+            if (buttons.get(aiMove).getText().equals(CLEAR)) {
+                buttons.get(aiMove).setText(O);
                 buttons.get(aiMove).setDisable(true);
-                xTurn = true;
-                label.setText("Spieler X ist Dran");
+                setPlayerX();
             } else {
                 easyAiMove();
             }
@@ -174,11 +180,10 @@ public class Controller {
 
                 }
                 easyCheck.forEach(button -> {
-                    if (button.getText().equals("")) {
-                        button.setText("O");
+                    if (button.getText().equals(CLEAR)) {
+                        button.setText(O);
                         button.setDisable(true);
-                        xTurn = true;
-                        label.setText("Spieler X ist Dran");
+                        setPlayerX();
                     }
                 });
             }
@@ -190,20 +195,19 @@ public class Controller {
         int bestScore = -10;
         int move = 0;
         for (int i = 0; i < 9; i++) {
-            if (buttons.get(i).getText().equals("")) {
-                buttons.get(i).setText("O");
+            if (buttons.get(i).getText().equals(CLEAR)) {
+                buttons.get(i).setText(O);
                 int score = minimax(buttons, false);
-                buttons.get(i).setText("");
+                buttons.get(i).setText(CLEAR);
                 if (score > bestScore) {
                     bestScore = score;
                     move = i;
                 }
             }
         }
-        buttons.get(move).setText("O");
+        buttons.get(move).setText(O);
         buttons.get(move).setDisable(true);
-        xTurn = true;
-        label.setText("Spieler X ist Dran");
+        setPlayerX();
     }
 
     private int minimax(ArrayList<Button> buttons, boolean isMaximizing) {
@@ -216,10 +220,10 @@ public class Controller {
         if (isMaximizing) {
             int bestScore = -10;
             for (int i = 0; i < 9; i++) {
-                if (buttons.get(i).getText().equals("")) {
-                    buttons.get(i).setText("O");
+                if (buttons.get(i).getText().equals(CLEAR)) {
+                    buttons.get(i).setText(O);
                     int score = minimax(buttons, false);
-                    buttons.get(i).setText("");
+                    buttons.get(i).setText(CLEAR);
                     bestScore = Math.max(score, bestScore);
                 }
             }
@@ -227,10 +231,10 @@ public class Controller {
         }else{
             int bestScore = 10;
             for(int i = 0; i < 9; i++){
-                if(buttons.get(i).getText().equals("")){
-                    buttons.get(i).setText("X");
+                if(buttons.get(i).getText().equals(CLEAR)){
+                    buttons.get(i).setText(X);
                     int score = minimax(buttons, true);
-                    buttons.get(i).setText("");
+                    buttons.get(i).setText(CLEAR);
                     bestScore = Math.min(score, bestScore);
                     }
                 }
@@ -264,7 +268,7 @@ public class Controller {
     private boolean draw(){
         int howManyTurn = 0;
         for(int i = 0; i < 9; i++){
-            if(!buttons.get(i).getText().equals("")){
+            if(!buttons.get(i).getText().equals(CLEAR)){
                 howManyTurn++;
             }
         }
@@ -278,18 +282,18 @@ public class Controller {
             String win = checkWin(i);
 
             if (win.equals("XXX")) {
-                label.setText("Spieler X hat gewonnen");
+                label.setText(PLAYERXWIN);
                 endGame();
             }
             if (win.equals("OOO")) {
-                label.setText("Spieler O hat gewonnen");
+                label.setText(PLAYEROWIN);
                 endGame();
             }
         }
         // Draw check //
         if (draw()) {
-            if (!label.getText().equals("Spieler X hat gewonnen") && !label.getText().equals("Spieler O hat gewonnen")) {
-                label.setText("Unentschieden");
+            if (!label.getText().equals(PLAYERXWIN) && !label.getText().equals(PLAYEROWIN)) {
+                label.setText(DRAW);
                 endGame();
             }
         }
