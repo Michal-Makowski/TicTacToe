@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -19,33 +18,20 @@ public class Controller {
 
     private ArrayList<Button> buttons;
 
-    private int howManyTurn = 0;
-
     @FXML
     private Label label;
 
     @FXML
-    private Button start;
+    private Button button1, button2, button3, button4, button5, button6, button7, button8, button9, start;
 
     @FXML
-    private Button button1, button2, button3, button4, button5, button6, button7, button8, button9;
-
+    private CheckBox checkBoxVsComputer;
     @FXML
-    private CheckBox checkBoxEasy;
-    @FXML
-    private RadioButton radioButtonEasy;
-    @FXML
-    private RadioButton radioButtonHard;
+    private RadioButton radioButtonEasy, radioButtonHard;
 
     @FXML
     private void vsComputer(ActionEvent event) {
-        if (checkBoxEasy.isSelected()) {
-            radioButtonHard.setDisable(false);
-            radioButtonEasy.setDisable(false);
-        } else {
-            radioButtonHard.setDisable(true);
-            radioButtonEasy.setDisable(true);
-        }
+        radioButtonDisable();
     }
 
     // Game Start //
@@ -63,23 +49,9 @@ public class Controller {
             button.setDisable(false);
             button.setText("");
         });
-        this.howManyTurn = 0;
-        checkBoxEasy.setDisable(true);
+        checkBoxVsComputer.setDisable(true);
         radioButtonHard.setDisable(true);
         radioButtonEasy.setDisable(true);
-    }
-
-    // End game //
-    private void endGame() {
-        buttons.forEach(button -> button.setDisable(true));
-        checkBoxEasy.setDisable(false);
-        if (checkBoxEasy.isSelected()) {
-            radioButtonHard.setDisable(false);
-            radioButtonEasy.setDisable(false);
-        } else {
-            radioButtonHard.setDisable(true);
-            radioButtonEasy.setDisable(true);
-        }
     }
 
     // Picking a random player //
@@ -94,9 +66,12 @@ public class Controller {
         start.setText("Neu Start");
     }
 
+
+
+
     // Game logic //
     private void play() {
-        if (checkBoxEasy.isSelected()) {
+        if (checkBoxVsComputer.isSelected()) {
             xTurn = true;
             label.setText("Spieler X ist Dran");
             buttons.forEach(button ->
@@ -105,8 +80,14 @@ public class Controller {
             buttons.forEach(button ->
                     playerMove(button));
     }
-    // Game mode player vs player , player vs computer (easy) , player vs computer (hard) //
 
+    // End game //
+    private void endGame() {
+        buttons.forEach(button -> button.setDisable(true));
+        checkBoxVsComputer.setDisable(false);
+        radioButtonDisable();
+    }
+    // Game mode player vs player , player vs computer (easy) , player vs computer (hard) //
     //player vs player //
     private void playerMove(Button button) {
         button.setOnMouseClicked(MouseEvent -> {
@@ -141,41 +122,8 @@ public class Controller {
         });
     }
 
-    // Checking if someone won //
-    private void anybodyWin() {
 
-        for (int i = 0; i < 8; i++) {
-            String win = switch (i) {
-                case 0 -> button1.getText() + button2.getText() + button3.getText();
-                case 1 -> button4.getText() + button5.getText() + button6.getText();
-                case 2 -> button7.getText() + button8.getText() + button9.getText();
-                case 3 -> button1.getText() + button4.getText() + button7.getText();
-                case 4 -> button2.getText() + button5.getText() + button8.getText();
-                case 5 -> button3.getText() + button6.getText() + button9.getText();
-                case 6 -> button1.getText() + button5.getText() + button9.getText();
-                case 7 -> button3.getText() + button5.getText() + button7.getText();
-                default -> null;
-            };
 
-            if (win.equals("XXX")) {
-                label.setText("Spieler X hat gewonnen");
-                endGame();
-            }
-            if (win.equals("OOO")) {
-                label.setText("Spieler O hat gewonnen");
-                endGame();
-            }
-        }
-        // Draw check //
-        this.howManyTurn++;
-        if (this.howManyTurn == 9) {
-            if (!label.getText().equals("Spieler X hat gewonnen") || !label.getText().equals("Spieler X hat gewonnen")) {
-                label.setText("Unentschieden");
-                endGame();
-            }
-        }
-
-    }
     // computer easy logic //
     private void easyAiMove() {
         easyAiCheck();
@@ -195,58 +143,33 @@ public class Controller {
     private void easyAiCheck() {
         ArrayList<Button> easyCheck = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
-            String win = switch (i) {
-                case 0 -> button1.getText() + button2.getText() + button3.getText();
-                case 1 -> button4.getText() + button5.getText() + button6.getText();
-                case 2 -> button7.getText() + button8.getText() + button9.getText();
-                case 3 -> button1.getText() + button4.getText() + button7.getText();
-                case 4 -> button2.getText() + button5.getText() + button8.getText();
-                case 5 -> button3.getText() + button6.getText() + button9.getText();
-                case 6 -> button1.getText() + button5.getText() + button9.getText();
-                case 7 -> button3.getText() + button5.getText() + button7.getText();
-                default -> null;
-            };
+            String win = checkWin(i);
+
             if (win.equals("OO")) {
                 switch (i) {
                     case 0 -> {
-                        easyCheck.add(button1);
-                        easyCheck.add(button2);
-                        easyCheck.add(button3);
+                        easyCheck.add(button1); easyCheck.add(button2); easyCheck.add(button3);
                     }
                     case 1 -> {
-                        easyCheck.add(button4);
-                        easyCheck.add(button5);
-                        easyCheck.add(button6);
+                        easyCheck.add(button4); easyCheck.add(button5); easyCheck.add(button6);
                     }
                     case 2 -> {
-                        easyCheck.add(button7);
-                        easyCheck.add(button8);
-                        easyCheck.add(button9);
+                        easyCheck.add(button7); easyCheck.add(button8); easyCheck.add(button9);
                     }
                     case 3 -> {
-                        easyCheck.add(button1);
-                        easyCheck.add(button4);
-                        easyCheck.add(button7);
+                        easyCheck.add(button1); easyCheck.add(button4); easyCheck.add(button7);
                     }
                     case 4 -> {
-                        easyCheck.add(button2);
-                        easyCheck.add(button5);
-                        easyCheck.add(button8);
+                        easyCheck.add(button2); easyCheck.add(button5); easyCheck.add(button8);
                     }
                     case 5 -> {
-                        easyCheck.add(button3);
-                        easyCheck.add(button6);
-                        easyCheck.add(button9);
+                        easyCheck.add(button3); easyCheck.add(button6); easyCheck.add(button9);
                     }
                     case 6 -> {
-                        easyCheck.add(button1);
-                        easyCheck.add(button5);
-                        easyCheck.add(button9);
+                        easyCheck.add(button1); easyCheck.add(button5); easyCheck.add(button9);
                     }
                     case 7 -> {
-                        easyCheck.add(button3);
-                        easyCheck.add(button5);
-                        easyCheck.add(button7);
+                        easyCheck.add(button3); easyCheck.add(button5); easyCheck.add(button7);
                     }
 
                 }
@@ -285,27 +208,11 @@ public class Controller {
 
     private int minimax(ArrayList<Button> buttons, boolean isMaximizing) {
         for (int i = 0; i < 8; i++) {
-            String win = switch (i) {
-                case 0 -> button1.getText() + button2.getText() + button3.getText();
-                case 1 -> button4.getText() + button5.getText() + button6.getText();
-                case 2 -> button7.getText() + button8.getText() + button9.getText();
-                case 3 -> button1.getText() + button4.getText() + button7.getText();
-                case 4 -> button2.getText() + button5.getText() + button8.getText();
-                case 5 -> button3.getText() + button6.getText() + button9.getText();
-                case 6 -> button1.getText() + button5.getText() + button9.getText();
-                case 7 -> button3.getText() + button5.getText() + button7.getText();
-                default -> null;
-            };
+            String win = checkWin(i);
             if (win.equals("XXX")) return -1;
             if (win.equals("OOO")) return 1;
         }
-        int minimaxTurn = 0;
-        for(int i = 0; i < 9; i++){
-            if(buttons.get(i).getText().equals("X") || buttons.get(i).getText().equals("O")){
-                minimaxTurn++;
-            }
-        }
-        if(minimaxTurn==9) return 0;
+        if(draw()) return 0;
         if (isMaximizing) {
             int bestScore = -10;
             for (int i = 0; i < 9; i++) {
@@ -330,6 +237,64 @@ public class Controller {
             return bestScore;
             }
         }
+
+    private void radioButtonDisable(){
+        if (checkBoxVsComputer.isSelected()) {
+            radioButtonHard.setDisable(false);
+            radioButtonEasy.setDisable(false);
+        } else {
+            radioButtonHard.setDisable(true);
+            radioButtonEasy.setDisable(true);
+        }
+    }
+    private String checkWin(int i){
+        String win = switch (i) {
+            case 0 -> button1.getText() + button2.getText() + button3.getText();
+            case 1 -> button4.getText() + button5.getText() + button6.getText();
+            case 2 -> button7.getText() + button8.getText() + button9.getText();
+            case 3 -> button1.getText() + button4.getText() + button7.getText();
+            case 4 -> button2.getText() + button5.getText() + button8.getText();
+            case 5 -> button3.getText() + button6.getText() + button9.getText();
+            case 6 -> button1.getText() + button5.getText() + button9.getText();
+            case 7 -> button3.getText() + button5.getText() + button7.getText();
+            default -> null;
+        };
+        return win;
+    }
+    private boolean draw(){
+        int howManyTurn = 0;
+        for(int i = 0; i < 9; i++){
+            if(!buttons.get(i).getText().equals("")){
+                howManyTurn++;
+            }
+        }
+        return howManyTurn == 9;
+    }
+
+    // Checking if someone won //
+    private void anybodyWin() {
+
+        for (int i = 0; i < 8; i++) {
+            String win = checkWin(i);
+
+            if (win.equals("XXX")) {
+                label.setText("Spieler X hat gewonnen");
+                endGame();
+            }
+            if (win.equals("OOO")) {
+                label.setText("Spieler O hat gewonnen");
+                endGame();
+            }
+        }
+        // Draw check //
+        if (draw()) {
+            if (!label.getText().equals("Spieler X hat gewonnen") && !label.getText().equals("Spieler O hat gewonnen")) {
+                label.setText("Unentschieden");
+                endGame();
+            }
+        }
+
+    }
     }
 
 
