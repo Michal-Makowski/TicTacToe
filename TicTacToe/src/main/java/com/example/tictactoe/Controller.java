@@ -32,6 +32,7 @@ public class Controller {
 
     @FXML
     private CheckBox checkBoxVsComputer;
+
     @FXML
     private RadioButton radioButtonEasy, radioButtonHard;
 
@@ -39,23 +40,14 @@ public class Controller {
     private void vsComputer(ActionEvent event) {
         radioButtonDisable();
     }
-
-    // Game Start //
+    // --- Game start --- //
     @FXML
     private void buttonStartClicked() {
         newGame();
         whoMakeFirstTurn();
         play();
     }
-    private  void setPlayerO(){
-        xTurn = false;
-        label.setText(PLAYERO);
-    }
-    private void setPlayerX(){
-        xTurn = true;
-        label.setText(PLAYERX);
-    }
-    // New game preparing //
+    // --- Preparing new game --- //
     private void newGame() {
         buttons = new ArrayList<>(Arrays.asList(button1, button2, button3, button4, button5, button6, button7, button8, button9));
         buttons.forEach(button -> {
@@ -66,21 +58,13 @@ public class Controller {
         radioButtonHard.setDisable(true);
         radioButtonEasy.setDisable(true);
     }
-
-    // Picking a random player //
-    private void whoMakeFirstTurn() {
-        if (random.nextInt(2) == 0) {
-            setPlayerX();
-        } else {
-            setPlayerO();
-        }
-        start.setText("Neu Start");
+    // --- End Game --- //
+    private void endGame() {
+        buttons.forEach(button -> button.setDisable(true));
+        checkBoxVsComputer.setDisable(false);
+        radioButtonDisable();
     }
-
-
-
-
-    // Game logic //
+    // --- Checking game mode --- //
     private void play() {
         if (checkBoxVsComputer.isSelected()) {
             setPlayerX();
@@ -91,14 +75,8 @@ public class Controller {
                     playerMove(button));
     }
 
-    // End game //
-    private void endGame() {
-        buttons.forEach(button -> button.setDisable(true));
-        checkBoxVsComputer.setDisable(false);
-        radioButtonDisable();
-    }
-    // Game mode player vs player , player vs computer (easy) , player vs computer (hard) //
-    //player vs player //
+    // <<<--->>> Game mode player vs player , player vs computer (easy) , player vs computer (hard) <<<--->>> //
+    // --- Player vs Player --- //
     private void playerMove(Button button) {
         button.setOnMouseClicked(MouseEvent -> {
             if (xTurn) {
@@ -113,8 +91,7 @@ public class Controller {
             anybodyWin();
         });
     }
-
-    // player vs computer (easy) or (hard)//
+    // --- Player vs Computer (easy) or (hard) --- //
     private void playerMoveAiMove(Button button) {
         button.setOnMouseClicked(MouseEvent -> {
             if (xTurn) {
@@ -128,10 +105,11 @@ public class Controller {
             }
         });
     }
+    // <<<--->>>  <<<--->>> //
 
-
-
-    // computer easy logic //
+    // <<<--->>> AI Logic <<<--->>> //
+    // --- Game mode "easy". Pick a random move and when game state is --- //
+    // --- X X/ XX/XX / pick winning move --- //
     private void easyAiMove() {
         easyAiCheck();
         if (!label.getText().equals(PLAYERX)) {
@@ -145,12 +123,11 @@ public class Controller {
             }
         }
     }
-
+    // --- Check game state for X X/XX / XX/ situation and pick winning move --- //
     private void easyAiCheck() {
         ArrayList<Button> easyCheck = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             String win = checkWin(i);
-
             if (win.equals("OO")) {
                 switch (i) {
                     case 0 -> {
@@ -177,7 +154,6 @@ public class Controller {
                     case 7 -> {
                         easyCheck.add(button3); easyCheck.add(button5); easyCheck.add(button7);
                     }
-
                 }
                 easyCheck.forEach(button -> {
                     if (button.getText().equals(CLEAR)) {
@@ -188,9 +164,8 @@ public class Controller {
                 });
             }
         }
-
     }
-    // computer hard logic (Minimax Algorithm)//
+    // --- Game mode "hard". Pick always the best move --- //
     private void hardAiMove() {
         int bestScore = -10;
         int move = 0;
@@ -209,7 +184,7 @@ public class Controller {
         buttons.get(move).setDisable(true);
         setPlayerX();
     }
-
+    // --- Minimax algorithms implementation --- //
     private int minimax(ArrayList<Button> buttons, boolean isMaximizing) {
         for (int i = 0; i < 8; i++) {
             String win = checkWin(i);
@@ -236,21 +211,37 @@ public class Controller {
                     int score = minimax(buttons, true);
                     buttons.get(i).setText(CLEAR);
                     bestScore = Math.min(score, bestScore);
-                    }
                 }
+            }
             return bestScore;
+        }
+    }
+    // <<<--->>>  <<<--->>> //
+
+    // <<<--->>> Check game state Win/Draw <<<--->>> //
+    // --- Checking if someone won and end the game --- //
+    private void anybodyWin() {
+        for (int i = 0; i < 8; i++) {
+            String win = checkWin(i);
+            if (win.equals("XXX")) {
+                label.setText(PLAYERXWIN);
+                endGame();
+            }
+            if (win.equals("OOO")) {
+                label.setText(PLAYEROWIN);
+                endGame();
+            }
+        }
+        // --- Draw check and last move draw check (when last move give us win don't call draw) --- //
+        if (draw()) {
+            if (!label.getText().equals(PLAYERXWIN) && !label.getText().equals(PLAYEROWIN)) {
+                label.setText(DRAW);
+                endGame();
             }
         }
 
-    private void radioButtonDisable(){
-        if (checkBoxVsComputer.isSelected()) {
-            radioButtonHard.setDisable(false);
-            radioButtonEasy.setDisable(false);
-        } else {
-            radioButtonHard.setDisable(true);
-            radioButtonEasy.setDisable(true);
-        }
     }
+    // --- Checking game state  --- //
     private String checkWin(int i){
         String win = switch (i) {
             case 0 -> button1.getText() + button2.getText() + button3.getText();
@@ -265,6 +256,7 @@ public class Controller {
         };
         return win;
     }
+    // --- Check draw and return True/False --- //
     private boolean draw(){
         int howManyTurn = 0;
         for(int i = 0; i < 9; i++){
@@ -274,31 +266,35 @@ public class Controller {
         }
         return howManyTurn == 9;
     }
+    // <<<--->>>  <<<--->>> //
 
-    // Checking if someone won //
-    private void anybodyWin() {
-
-        for (int i = 0; i < 8; i++) {
-            String win = checkWin(i);
-
-            if (win.equals("XXX")) {
-                label.setText(PLAYERXWIN);
-                endGame();
-            }
-            if (win.equals("OOO")) {
-                label.setText(PLAYEROWIN);
-                endGame();
-            }
-        }
-        // Draw check //
-        if (draw()) {
-            if (!label.getText().equals(PLAYERXWIN) && !label.getText().equals(PLAYEROWIN)) {
-                label.setText(DRAW);
-                endGame();
-            }
-        }
-
+    // --- Set player O --- //
+    private  void setPlayerO(){
+        xTurn = false;
+        label.setText(PLAYERO);
     }
+    // --- Set player X --- //
+    private void setPlayerX(){
+        xTurn = true;
+        label.setText(PLAYERX);
     }
-
-
+    // --- Picking a random player --- //
+    private void whoMakeFirstTurn() {
+        if (random.nextInt(2) == 0) {
+            setPlayerX();
+        } else {
+            setPlayerO();
+        }
+        start.setText("Neu Start");
+    }
+    // --- Radio Button --- //
+    private void radioButtonDisable(){
+        if (checkBoxVsComputer.isSelected()) {
+            radioButtonHard.setDisable(false);
+            radioButtonEasy.setDisable(false);
+        } else {
+            radioButtonHard.setDisable(true);
+            radioButtonEasy.setDisable(true);
+        }
+    }
+}
